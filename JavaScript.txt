@@ -1,0 +1,251 @@
+const menuBtn = document.getElementById("menuBtn");
+const navbar = document.querySelector(".navbar");
+
+menuBtn.addEventListener("click", () => {
+
+    navbar.classList.toggle("active");
+
+});
+const searchBtn = document.getElementById("searchBtn");
+const searchBox = document.getElementById("searchBox");
+const searchInput = document.getElementById("searchInput");
+
+searchBtn.addEventListener("click", () => {
+
+    searchBox.classList.toggle("active");
+
+    searchInput.focus();
+
+});
+
+const categoryButtons =
+    document.querySelectorAll(".category-btn");
+
+const products =
+    document.querySelectorAll(".product-card");
+
+
+categoryButtons.forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        const category =
+            button.dataset.category;
+
+        products.forEach(product => {
+
+            if (
+                product.dataset.category === category
+            ) {
+
+                product.style.display = "block";
+
+            } else {
+                  product.style.display = "none";
+
+            }
+
+        });
+
+    });
+
+});
+
+searchInput.addEventListener("input", () => {
+
+    const search =
+        searchInput.value.toLowerCase();
+
+    products.forEach(product => {
+
+        const name =
+            product
+                .querySelector("h3")
+                .textContent
+                .toLowerCase();
+
+        if (name.includes(search)) {
+
+            product.style.display = "block";
+
+        } else {
+
+            product.style.display = "none";
+
+        }
+
+    });
+
+});
+
+let cart = [];
+
+
+const cartBtn =
+    document.getElementById("cartBtn");
+
+const cartPanel =
+    document.getElementById("cartPanel");
+
+const closeCart =
+    document.getElementById("closeCart");
+
+const cartItems =
+    document.getElementById("cartItems");
+
+const cartCount =
+    document.getElementById("cartCount");
+
+const cartTotal =
+    document.getElementById("cartTotal");
+cartBtn.addEventListener("click", () => {
+
+    cartPanel.classList.add("active");
+
+});
+closeCart.addEventListener("click", () => {
+
+    cartPanel.classList.remove("active");
+
+});
+const addButtons =
+    document.querySelectorAll(".add-cart");
+
+
+addButtons.forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        const name =
+            button.dataset.name;
+
+        const price =
+            Number(button.dataset.price);
+
+        cart.push({
+            name: name,
+            price: price
+        });
+
+        updateCart();
+        cartPanel.classList.add("active");
+
+    });
+
+});
+function updateCart() {
+
+    cartItems.innerHTML = "";
+
+    let total = 0;
+
+
+    if (cart.length === 0) {
+
+        cartItems.innerHTML = `
+            <p class="empty-cart">
+                Tu carrito está vacío 💕
+            </p>
+        `;
+
+    }
+
+
+    cart.forEach((item, index) => {
+
+        total += item.price;
+const div =
+            document.createElement("div");
+
+        div.classList.add("cart-item");
+
+        div.innerHTML = `
+
+            <div>
+
+                <strong>
+                    ${item.name}
+                </strong>
+
+                <p>
+                    $${item.price.toLocaleString("es-AR")}
+                </p>
+
+            </div>
+
+            <button
+                class="remove-item"
+                onclick="removeItem(${index})">
+
+                <i class="fa-solid fa-trash"></i>
+               </button>
+
+        `;
+
+        cartItems.appendChild(div);
+
+    });
+
+
+    cartCount.textContent = cart.length;
+
+    cartTotal.textContent =
+        "$" + total.toLocaleString("es-AR");
+
+}   
+function removeItem(index) {
+
+    cart.splice(index, 1);
+
+    updateCart();
+
+}
+const checkoutBtn =
+    document.getElementById("checkoutBtn");
+
+
+checkoutBtn.addEventListener("click", () => {
+
+    if (cart.length === 0) {
+
+        alert("Tu carrito está vacío 💕");
+
+        return;
+
+    }
+
+
+    let message =
+        "Hola! Quiero hacer un pedido:%0A%0A";
+         cart.forEach(item => {
+
+        message +=
+            "• " +
+            item.name +
+            " - $" +
+            item.price +
+            "%0A";
+
+    });
+
+
+    const total =
+        cart.reduce(
+            (sum, item) => sum + item.price,
+            0
+        );
+ message +=
+        "%0ATotal: $" +
+        total;
+
+
+    const phone =
+        "5490000000000";
+
+
+    window.open(
+        `https://wa.me/${phone}?text=${message}`,
+        "_blank"
+    );
+
+});
